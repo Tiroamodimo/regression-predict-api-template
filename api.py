@@ -21,7 +21,7 @@
 import pickle
 import json
 import numpy as np
-from model import load_model, make_prediction
+from base_model import load_model, make_prediction
 from flask import Flask, request, jsonify
 
 # Application definition
@@ -30,7 +30,7 @@ app = Flask(__name__)
 # Load our model into memory.
 # Please update this path to reflect your own trained model.
 static_model = load_model(
-    path_to_model='assets/trained-models/sendy_simple_lm_regression.pkl')
+    path_to_model='assets/trained-models/base_model.pkl')
 
 print ('-'*40)
 print ('Model succesfully loaded')
@@ -42,11 +42,14 @@ print ('-'*40)
 # http:{Host-machine-ip-address}:5000/api_v0.1
 @app.route('/api_v0.1', methods=['POST'])
 def model_prediction():
+
     # We retrieve the data payload of the POST request
     data = request.get_json(force=True)
+    print(f'recived data successfully: \n{data}')
     # We then preprocess our data, and use our pretrained model to make a
-    # prediction.
+    # prediction.   
     output = make_prediction(data, static_model)
+    print(f'prediction made successfully: \n{output}')
     # We finally package this prediction as a JSON object to deliver a valid
     # response with our API.
     return jsonify(output)
@@ -57,4 +60,4 @@ def model_prediction():
 # This will allow Flask to automatically restart itself everytime you
 # update your API code.
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)
